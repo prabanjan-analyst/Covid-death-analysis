@@ -129,3 +129,34 @@ FROM CovidDeaths death JOIN CovidVaccinations vaccin
 WHERE death.continent IS NOT NULL;
 
 SELECT * FROM vaccinatedPopulation;
+
+
+-- Data's Used in Tableau 
+-- 1. Global Death count
+SELECT SUM(new_cases) AS total_new_cases, SUM(CAST(new_deaths AS INT)) AS total_new_deaths,
+	(SUM(CAST(new_deaths AS INT))/SUM(new_cases))*100 AS deathPercent
+FROM CovidDeaths
+WHERE continent IS NOT NULL
+ORDER BY 1,2;
+
+-- 2.Total Death count by Continent
+-- Total New Death Count
+SELECT continent, SUM(CAST(new_deaths AS INT)) AS totalDeathCount
+FROM CovidDeaths 
+WHERE continent IS NOT NULL 
+GROUP BY continent 
+ORDER BY totalDeathCount DESC;
+
+-- 3.Countries with Highest Infection Rate compared to population
+SELECT location, population, MAX(total_cases) AS highestInfected, 
+	MAX((total_cases/population))*100 AS infectedPopulationPercent
+FROM CovidDeaths 
+GROUP BY location, population 
+ORDER BY infectedPopulationPercent DESC;
+
+-- 4.Countries with Highest Infection Rate compared to population and date
+SELECT location, population, date, MAX(total_cases) AS highestInfected, 
+	MAX((total_cases/population))*100 AS infectedPopulationPercent
+FROM CovidDeaths 
+GROUP BY location, population, date 
+ORDER BY infectedPopulationPercent DESC;
